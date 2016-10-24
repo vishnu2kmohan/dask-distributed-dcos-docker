@@ -12,6 +12,8 @@ then
     SCHEDULER_APP_PREFIX=$(python -c \
         "import os; print('-'.join(os.environ['MARATHON_APP_ID'].split('/')[:-1]))" \
     )
+    echo "Dask Scheduler App Prefix: ${SCHEDULER_APP_PREFIX}"
+
     dask-scheduler \
         --port "${PORT1}" \
         --http-port "${PORT2}" \
