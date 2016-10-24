@@ -18,7 +18,7 @@ then
     --host "${LIBPROCESS_IP}" \
     --nthreads 1 \
     --nprocs $(python -c \
-        "import os,math; print(int(math.ceil(os.environ['MARATHON_APP_RESOURCE_CPUS']))))" \
+        "import os,math; print(int(math.ceil(os.environ['MARATHON_APP_RESOURCE_CPUS'])))") \
     --name "${MESOS_TASK_ID}" \
         "${VIP_PREFIX}dask-scheduler.marathon.l4lb.thisdcos.directory:8786"
 else
