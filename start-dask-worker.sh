@@ -15,7 +15,7 @@ then
     echo "DC/OS Named VIP Prefix: ${VIP_PREFIX}"
 
     NPROCS=$(python -c \
-        "import os,math; print(int(math.ceil(os.environ['MARATHON_APP_RESOURCE_CPUS'])))" \
+        "import os,math; print(int(math.ceil(float(os.environ['MARATHON_APP_RESOURCE_CPUS']))))" \
     )
     echo "Dask Number of Processes: ${NPROCS}"
 
