@@ -1,0 +1,154 @@
+{
+  "id": "/jupyter-dask-distributed",
+  "apps": [
+    {
+      "id": "/jupyter-dask-distributed/dask-scheduler",
+      "instances": 1,
+      "cpus": 1,
+      "mem": 1024,
+      "cmd": "bash -c '(start-dask-scheduler.sh &) && notebook.sh'",
+      "labels": {
+        "HAPROXY_GROUP": "external"
+      },
+      "container": {
+        "type": "DOCKER",
+        "docker": {
+          "image": "vishnumohan/jupyter-dask-distributed",
+          "forcePullImage": true
+        }
+      },
+      "portDefinitions": [
+	{
+	  "protocol": "tcp",
+	  "port": 0,
+	  "labels": {
+	    "VIP_0": "/jupyter-dask-distributed/dask-scheduler:8888"
+	  },
+	  "name": "jupyter-notebook"
+	},
+	{
+	  "protocol": "tcp",
+	  "port": 1,
+	  "labels": {
+	    "VIP_1": "/jupyter-dask-distributed/dask-scheduler:8786"
+	  },
+	  "name": "dask-scheduler"
+	},
+	{
+	  "protocol": "tcp",
+	  "port": 2,
+	  "labels": {
+	    "VIP_2: "/jupyter-dask-distributed/dask-scheduler:9786"
+	  },
+	  "name": "dask-scheduler-http"
+	},
+	{
+	  "protocol": "tcp",
+	  "port": 3,
+	  "labels": {
+	    "VIP_3": "/jupyter-dask-distributed/dask-scheduler:8787"
+	  },
+	  "name": "dask-scheduler-bokeh"
+	}
+      ],
+      "healthChecks": [
+        {
+          "portIndex": 0,
+          "protocol": "HTTP",
+          "path": "/",
+          "gracePeriodSeconds": 30,
+          "intervalSeconds": 20,
+          "timeoutSeconds": 10,
+          "maxConsecutiveFailures": 3,
+          "ignoreHttp1xx": false
+        }
+      ],
+      "readinessChecks": [
+        {
+          "name": "readinessCheck",
+          "protocol": "HTTP",
+          "path": "/",
+          "portName": "dask-scheduler-http",
+          "intervalSeconds": 20,
+          "timeoutSeconds": 10,
+          "httpStatusCodesForReady": [ 200 ],
+          "preserveLastResponse": false
+        }
+      ],
+      "requirePorts": false,
+      "backoffSeconds": 1,
+      "backoffFactor": 1.15,
+      "maxLaunchDelaySeconds": 3600
+    },
+    {
+      "id": "/jupyter-dask-distributed/dask-worker",
+      "instances": 1,
+      "cpus": 1,
+      "mem": 1024,
+      "cmd": "bash -c '(notebook.sh &) && start-dask-worker.sh'",
+      "labels": {
+        "HAPROXY_GROUP": "external"
+      },
+      "container": {
+        "type": "DOCKER",
+        "docker": {
+          "image": "vishnumohan/jupyter-dask-distributed",
+          "forcePullImage": true
+        }
+      },
+      "portDefinitions": [
+	{
+	  "protocol": "tcp",
+	  "port": 0,
+	  "name": "jupyter-notebook"
+	},
+	{
+	  "protocol": "tcp",
+	  "port": 1,
+	  "name": "dask-worker"
+	},
+	{
+	  "protocol": "tcp",
+	  "port": 2,
+	  "name": "dask-worker-http"
+	},
+	{
+	  "protocol": "tcp",
+	  "port": 3,
+	  "name": "dask-worker-nanny"
+	}
+      ],
+      "healthChecks": [
+        {
+          "portIndex": 0,
+          "protocol": "HTTP",
+          "path": "/",
+          "gracePeriodSeconds": 30,
+          "intervalSeconds": 60,
+          "timeoutSeconds": 20,
+          "maxConsecutiveFailures": 3,
+          "ignoreHttp1xx": false
+        }
+      ],
+      "readinessChecks": [
+        {
+          "name": "readinessCheck",
+          "protocol": "HTTP",
+          "path": "/",
+          "portName": "dask-worker-http",
+          "intervalSeconds": 20,
+          "timeoutSeconds": 10,
+          "httpStatusCodesForReady": [ 200 ],
+          "preserveLastResponse": false
+        }
+      ],
+      "requirePorts": false,
+      "backoffSeconds": 1,
+      "backoffFactor": 1.15,
+      "maxLaunchDelaySeconds": 3600,
+      "dependencies": [
+        "/jupyter-dask-distributed/scheduler"
+      ]
+    }
+  ]
+}
