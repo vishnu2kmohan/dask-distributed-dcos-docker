@@ -9,14 +9,13 @@ PEM_FILE = os.path.join(jupyter_data_dir(), 'notebook.pem')
 # Setup the Notebook to listen on all interfaces on port 8888 by default
 c.NotebookApp.ip = '*'
 c.NotebookApp.port = 8888
+c.NotebookApp.open_browser = False
 
-# To use Docker Host Networking under Marathon, provided PORT_8888 is not set:
-if 'PORT_8888' not in os.environ:
+# Configure Networking while running under Marathon:
+if 'MARATHON_APP_ID' in os.environ:
     if 'PORT0' in os.environ:
         c.NotebookApp.port = int(os.environ['PORT0'])
-
-c.NotebookApp.open_browser = False
-c.NotebookApp.server_extensions.append('ipyparallel.nbextension')
+        c.NotebookApp.ip = os.environ['LIBPROCESS_IP']
 
 # Set a certificate if USE_HTTPS is set to any value
 if 'USE_HTTPS' in os.environ:
