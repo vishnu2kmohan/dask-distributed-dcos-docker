@@ -13,14 +13,14 @@
       "container": {
         "type": "DOCKER",
         "docker": {
-          "image": "vishnumohan/jupyter-dask-distributed",
+          "image": "vishnumohan/dask-distributed-dcos",
           "forcePullImage": true
         }
       },
       "portDefinitions": [
 	{
 	  "protocol": "tcp",
-	  "port": 0,
+	  "port": 8888,
 	  "labels": {
 	    "VIP_0": "/jupyter-dask-distributed/dask-scheduler:8888"
 	  },
@@ -28,7 +28,7 @@
 	},
 	{
 	  "protocol": "tcp",
-	  "port": 1,
+	  "port": 8786,
 	  "labels": {
 	    "VIP_1": "/jupyter-dask-distributed/dask-scheduler:8786"
 	  },
@@ -36,15 +36,15 @@
 	},
 	{
 	  "protocol": "tcp",
-	  "port": 2,
+	  "port": 9786,
 	  "labels": {
-	    "VIP_2: "/jupyter-dask-distributed/dask-scheduler:9786"
+	    "VIP_2": "/jupyter-dask-distributed/dask-scheduler:9786"
 	  },
 	  "name": "dask-scheduler-http"
 	},
 	{
 	  "protocol": "tcp",
-	  "port": 3,
+	  "port": 8787,
 	  "labels": {
 	    "VIP_3": "/jupyter-dask-distributed/dask-scheduler:8787"
 	  },
@@ -55,19 +55,45 @@
         {
           "portIndex": 0,
           "protocol": "HTTP",
-          "path": "/",
+          "path": "/tree",
           "gracePeriodSeconds": 30,
           "intervalSeconds": 20,
           "timeoutSeconds": 10,
           "maxConsecutiveFailures": 3,
           "ignoreHttp1xx": false
+        },
+        {
+          "portIndex": 1,
+          "protocol": "TCP",
+          "gracePeriodSeconds": 30,
+          "intervalSeconds": 20,
+          "timeoutSeconds": 10,
+          "maxConsecutiveFailures": 3
+        },
+        {
+          "portIndex": 2,
+          "protocol": "HTTP",
+          "path": "/info.json",
+          "gracePeriodSeconds": 30,
+          "intervalSeconds": 20,
+          "timeoutSeconds": 10,
+          "maxConsecutiveFailures": 3,
+          "ignoreHttp1xx": false
+        },
+        {
+          "portIndex": 3,
+          "protocol": "TCP",
+          "gracePeriodSeconds": 30,
+          "intervalSeconds": 20,
+          "timeoutSeconds": 10,
+          "maxConsecutiveFailures": 3
         }
       ],
       "readinessChecks": [
         {
-          "name": "readinessCheck",
+          "name": "daskSchedulerReadinessCheck",
           "protocol": "HTTP",
-          "path": "/",
+          "path": "/info.json",
           "portName": "dask-scheduler-http",
           "intervalSeconds": 20,
           "timeoutSeconds": 10,
@@ -92,7 +118,7 @@
       "container": {
         "type": "DOCKER",
         "docker": {
-          "image": "vishnumohan/jupyter-dask-distributed",
+          "image": "vishnumohan/dask-distributed-dcos",
           "forcePullImage": true
         }
       },
@@ -104,17 +130,17 @@
 	},
 	{
 	  "protocol": "tcp",
-	  "port": 1,
+	  "port": 0,
 	  "name": "dask-worker"
 	},
 	{
 	  "protocol": "tcp",
-	  "port": 2,
+	  "port": 0,
 	  "name": "dask-worker-http"
 	},
 	{
 	  "protocol": "tcp",
-	  "port": 3,
+	  "port": 0,
 	  "name": "dask-worker-nanny"
 	}
       ],
@@ -122,19 +148,45 @@
         {
           "portIndex": 0,
           "protocol": "HTTP",
-          "path": "/",
+          "path": "/tree",
           "gracePeriodSeconds": 30,
           "intervalSeconds": 60,
           "timeoutSeconds": 20,
           "maxConsecutiveFailures": 3,
           "ignoreHttp1xx": false
+        },
+        {
+          "portIndex": 1,
+          "protocol": "TCP",
+          "gracePeriodSeconds": 30,
+          "intervalSeconds": 60,
+          "timeoutSeconds": 20,
+          "maxConsecutiveFailures": 3
+        },
+        {
+          "portIndex": 2,
+          "protocol": "HTTP",
+          "path": "/info.json",
+          "gracePeriodSeconds": 30,
+          "intervalSeconds": 60,
+          "timeoutSeconds": 20,
+          "maxConsecutiveFailures": 3,
+          "ignoreHttp1xx": false
+        },
+        {
+          "portIndex": 3,
+          "protocol": "TCP",
+          "gracePeriodSeconds": 30,
+          "intervalSeconds": 60,
+          "timeoutSeconds": 20,
+          "maxConsecutiveFailures": 3
         }
       ],
       "readinessChecks": [
         {
-          "name": "readinessCheck",
+          "name": "daskWorkerReadinessCheck",
           "protocol": "HTTP",
-          "path": "/",
+          "path": "/info.json",
           "portName": "dask-worker-http",
           "intervalSeconds": 20,
           "timeoutSeconds": 10,
@@ -147,7 +199,7 @@
       "backoffFactor": 1.15,
       "maxLaunchDelaySeconds": 3600,
       "dependencies": [
-        "/jupyter-dask-distributed/scheduler"
+        "/jupyter-dask-distributed/dask-scheduler"
       ]
     }
   ]
