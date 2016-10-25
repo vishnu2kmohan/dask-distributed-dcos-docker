@@ -1,8 +1,8 @@
 {
-  "id": "/jupyter-dask-distributed",
+  "id": "/dask-distributed-jupyter",
   "apps": [
     {
-      "id": "/jupyter-dask-distributed/dask-scheduler",
+      "id": "/dask-distributed-jupyter/dask-scheduler",
       "instances": 1,
       "cpus": 1,
       "mem": 1024,
@@ -22,7 +22,7 @@
 	  "protocol": "tcp",
 	  "port": 8888,
 	  "labels": {
-	    "VIP_0": "/jupyter-dask-distributed/dask-scheduler:8888"
+	    "VIP_0": "/dask-distributed-jupyter/dask-scheduler:8888"
 	  },
 	  "name": "jupyter-notebook"
 	},
@@ -30,7 +30,7 @@
 	  "protocol": "tcp",
 	  "port": 8786,
 	  "labels": {
-	    "VIP_1": "/jupyter-dask-distributed/dask-scheduler:8786"
+	    "VIP_1": "/dask-distributed-jupyter/dask-scheduler:8786"
 	  },
 	  "name": "dask-scheduler"
 	},
@@ -38,7 +38,7 @@
 	  "protocol": "tcp",
 	  "port": 9786,
 	  "labels": {
-	    "VIP_2": "/jupyter-dask-distributed/dask-scheduler:9786"
+	    "VIP_2": "/dask-distributed-jupyter/dask-scheduler:9786"
 	  },
 	  "name": "dask-scheduler-http"
 	},
@@ -46,7 +46,7 @@
 	  "protocol": "tcp",
 	  "port": 8787,
 	  "labels": {
-	    "VIP_3": "/jupyter-dask-distributed/dask-scheduler:8787"
+	    "VIP_3": "/dask-distributed-jupyter/dask-scheduler:8787"
 	  },
 	  "name": "dask-scheduler-bokeh"
 	}
@@ -63,14 +63,6 @@
           "ignoreHttp1xx": false
         },
         {
-          "portIndex": 1,
-          "protocol": "TCP",
-          "gracePeriodSeconds": 30,
-          "intervalSeconds": 20,
-          "timeoutSeconds": 10,
-          "maxConsecutiveFailures": 3
-        },
-        {
           "portIndex": 2,
           "protocol": "HTTP",
           "path": "/info.json",
@@ -82,11 +74,13 @@
         },
         {
           "portIndex": 3,
-          "protocol": "TCP",
+          "protocol": "HTTP",
+          "path": "/status",
           "gracePeriodSeconds": 30,
           "intervalSeconds": 20,
           "timeoutSeconds": 10,
-          "maxConsecutiveFailures": 3
+          "maxConsecutiveFailures": 3,
+          "ignoreHttp1xx": false
         }
       ],
       "readinessChecks": [
@@ -107,7 +101,7 @@
       "maxLaunchDelaySeconds": 3600
     },
     {
-      "id": "/jupyter-dask-distributed/dask-worker",
+      "id": "/dask-distributed-jupyter/dask-worker",
       "instances": 1,
       "cpus": 1,
       "mem": 1024,
@@ -156,14 +150,6 @@
           "ignoreHttp1xx": false
         },
         {
-          "portIndex": 1,
-          "protocol": "TCP",
-          "gracePeriodSeconds": 30,
-          "intervalSeconds": 20,
-          "timeoutSeconds": 10,
-          "maxConsecutiveFailures": 3
-        },
-        {
           "portIndex": 2,
           "protocol": "HTTP",
           "path": "/info.json",
@@ -172,14 +158,6 @@
           "timeoutSeconds": 10,
           "maxConsecutiveFailures": 3,
           "ignoreHttp1xx": false
-        },
-        {
-          "portIndex": 3,
-          "protocol": "TCP",
-          "gracePeriodSeconds": 30,
-          "intervalSeconds": 20,
-          "timeoutSeconds": 10,
-          "maxConsecutiveFailures": 3
         }
       ],
       "readinessChecks": [
@@ -199,7 +177,7 @@
       "backoffFactor": 1.15,
       "maxLaunchDelaySeconds": 3600,
       "dependencies": [
-        "/jupyter-dask-distributed/dask-scheduler"
+        "/dask-distributed-jupyter/dask-scheduler"
       ]
     }
   ]
