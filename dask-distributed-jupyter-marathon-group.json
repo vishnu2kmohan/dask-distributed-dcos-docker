@@ -106,9 +106,6 @@
       "cpus": 1,
       "mem": 1024,
       "cmd": "bash -c '(notebook.sh &) && sleep 5 && start-dask-worker.sh'",
-      "labels": {
-        "HAPROXY_GROUP": "external"
-      },
       "container": {
         "type": "DOCKER",
         "docker": {
