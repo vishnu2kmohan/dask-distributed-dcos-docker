@@ -13,8 +13,8 @@
       "container": {
         "type": "DOCKER",
         "docker": {
-          "image": "vishnumohan/dask-distributed-dcos",
-          "forcePullImage": true
+          "image": "vishnumohan/dask-distributed-dcos:0.12.0-1.14.3",
+          "forcePullImage": false
         }
       },
       "portDefinitions": [
@@ -109,8 +109,8 @@
       "container": {
         "type": "DOCKER",
         "docker": {
-          "image": "vishnumohan/dask-distributed-dcos",
-          "forcePullImage": true
+          "image": "vishnumohan/dask-distributed-dcos:0.12.0-1.14.3",
+          "forcePullImage": false
         }
       },
       "portDefinitions": [
