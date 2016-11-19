@@ -14,7 +14,7 @@ then
     )
     echo "DC/OS Named VIP Prefix: ${VIP_PREFIX}"
 
-    NPROCS=$(python -c \
+    NTHREADS=$(python -c \
         "import os,math; print(int(math.ceil(float(os.environ['MARATHON_APP_RESOURCE_CPUS']))))" \
     )
     echo "Dask Number of Processes: ${NPROCS}"
@@ -40,8 +40,8 @@ then
         --http-port "${PORT2}" \
         --nanny-port "${PORT3}" \
         --host "${LIBPROCESS_IP}" \
-        --nthreads 1 \
-        --nprocs "${NPROCS}" \
+        --nthreads "${NTHREADS}" \
+        --nprocs "1" \
         --memory-limit "${NBYTES}" \
         --name "${MESOS_TASK_ID}" \
         "${DASK_SCHEDULER}"
