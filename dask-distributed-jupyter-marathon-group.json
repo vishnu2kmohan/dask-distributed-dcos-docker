@@ -20,7 +20,7 @@
       "portDefinitions": [
 	{
 	  "protocol": "tcp",
-	  "port": 8888,
+	  "port": 0,
 	  "labels": {
 	    "VIP_0": "/dask-distributed-jupyter/dask-scheduler:8888"
 	  },
@@ -28,7 +28,7 @@
 	},
 	{
 	  "protocol": "tcp",
-	  "port": 8786,
+	  "port": 0,
 	  "labels": {
 	    "VIP_1": "/dask-distributed-jupyter/dask-scheduler:8786"
 	  },
@@ -36,7 +36,7 @@
 	},
 	{
 	  "protocol": "tcp",
-	  "port": 9786,
+	  "port": 0,
 	  "labels": {
 	    "VIP_2": "/dask-distributed-jupyter/dask-scheduler:9786"
 	  },
@@ -44,7 +44,7 @@
 	},
 	{
 	  "protocol": "tcp",
-	  "port": 8787,
+	  "port": 0,
 	  "labels": {
 	    "VIP_3": "/dask-distributed-jupyter/dask-scheduler:8787"
 	  },
@@ -104,7 +104,7 @@
       "id": "/dask-distributed-jupyter/dask-worker",
       "instances": 1,
       "cpus": 1,
-      "mem": 4096,
+      "mem": 8192,
       "cmd": "bash -c '(notebook.sh &) && sleep 5 && start-dask-worker.sh'",
       "container": {
         "type": "DOCKER",
