@@ -56,6 +56,7 @@ RUN $CONDA_USER_HOME/conda/bin/conda create -yq -n dask-distributed python=3.5\
        zict \
     && conda clean --yes --tarballs --packages \
     && pip install git+https://github.com/mrocklin/cachey --upgrade \
+    && jupyter nbextension enable vega --py --sys-prefix \
     && source deactivate"
 
 EXPOSE 8888 8786 8787 9786
