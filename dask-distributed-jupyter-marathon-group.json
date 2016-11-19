@@ -7,11 +7,14 @@
       "cpus": 1,
       "mem": 1024,
       "cmd": "bash -c '(start-dask-scheduler.sh &) && sleep 5 && notebook.sh'",
+      "env": {
+          "HOME": "/home/conda"
+      },
       "labels": {
         "HAPROXY_GROUP": "external"
       },
       "container": {
-        "type": "DOCKER",
+        "type": "MESOS",
         "docker": {
           "image": "vishnumohan/dask-distributed-dcos:0.12.0-1.14.3",
           "forcePullImage": false
@@ -106,8 +109,11 @@
       "cpus": 1,
       "mem": 8192,
       "cmd": "bash -c '(notebook.sh &) && sleep 5 && start-dask-worker.sh'",
+      "env": {
+          "HOME": "/home/conda"
+      },
       "container": {
-        "type": "DOCKER",
+        "type": "MESOS",
         "docker": {
           "image": "vishnumohan/dask-distributed-dcos:0.12.0-1.14.3",
           "forcePullImage": false
