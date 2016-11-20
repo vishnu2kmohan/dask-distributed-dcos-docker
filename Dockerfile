@@ -26,10 +26,12 @@ RUN $CONDA_USER_HOME/conda/bin/conda create -yq -n dask-distributed python=3.5\
        h5py \
        hdfs3 \
        ipykernel \
+       ipyleaflet \
        ipython \
        ipywidgets \
        joblib \
        jupyter_client \
+       jupyter_dashboards \
        jupyterlab \
        krb5 \
        libgsasl \
@@ -56,7 +58,10 @@ RUN $CONDA_USER_HOME/conda/bin/conda create -yq -n dask-distributed python=3.5\
        zict \
     && conda clean --yes --tarballs --packages \
     && pip install git+https://github.com/mrocklin/cachey --upgrade \
+    && jupyter nbextension enable jupyter_dashboards --py --sys-prefix \
     && jupyter nbextension enable vega --py --sys-prefix \
+    && pip install jupyter_declarativewidgets \
+    && jupyter declarativewidgets quick-setup --sys-prefix \
     && source deactivate"
 
 EXPOSE 8888 8786 8787 9786
