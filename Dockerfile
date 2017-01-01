@@ -62,6 +62,9 @@ RUN $CONDA_USER_HOME/conda/bin/conda create -yq -n dask-distributed python=3.5\
     && jupyter nbextension enable vega --py --sys-prefix \
     && pip install jupyter_declarativewidgets \
     && jupyter declarativewidgets quick-setup --sys-prefix \
+    && pip install dask-labextension \
+    && jupyter labextension install --py --sys-prefix dask_labextension \
+    && jupyter labextension enable --py --sys-prefix dask_labextension \
     && source deactivate"
 
 EXPOSE 8888 8786 8787 9786
