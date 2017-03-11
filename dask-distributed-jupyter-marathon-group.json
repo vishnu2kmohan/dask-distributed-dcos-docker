@@ -16,7 +16,7 @@
       "container": {
         "type": "MESOS",
         "docker": {
-          "image": "vishnumohan/dask-distributed-dcos:0.12.0-1.14.3",
+          "image": "vishnumohan/dask-distributed-dcos",
           "forcePullImage": false
         }
       },
@@ -25,7 +25,7 @@
 	  "protocol": "tcp",
 	  "port": 0,
 	  "labels": {
-	    "VIP_0": "/dask-distributed-jupyter/dask-scheduler:8888"
+	    "VIP_0": "/dask-distributed-jupyter.dask-scheduler:8888"
 	  },
 	  "name": "jupyter-notebook"
 	},
@@ -33,7 +33,7 @@
 	  "protocol": "tcp",
 	  "port": 0,
 	  "labels": {
-	    "VIP_1": "/dask-distributed-jupyter/dask-scheduler:8786"
+	    "VIP_1": "/dask-distributed-jupyter.dask-scheduler:8786"
 	  },
 	  "name": "dask-scheduler"
 	},
@@ -41,7 +41,7 @@
 	  "protocol": "tcp",
 	  "port": 0,
 	  "labels": {
-	    "VIP_2": "/dask-distributed-jupyter/dask-scheduler:9786"
+	    "VIP_2": "/dask-distributed-jupyter.dask-scheduler:9786"
 	  },
 	  "name": "dask-scheduler-http"
 	},
@@ -49,7 +49,7 @@
 	  "protocol": "tcp",
 	  "port": 0,
 	  "labels": {
-	    "VIP_3": "/dask-distributed-jupyter/dask-scheduler:8787"
+	    "VIP_3": "/dask-distributed-jupyter.dask-scheduler:8787"
 	  },
 	  "name": "dask-scheduler-bokeh"
 	}
@@ -57,74 +57,33 @@
       "healthChecks": [
         {
           "portIndex": 0,
-          "protocol": "HTTP",
+          "protocol": "MESOS_HTTP",
           "path": "/tree",
           "gracePeriodSeconds": 30,
           "intervalSeconds": 20,
           "timeoutSeconds": 10,
           "maxConsecutiveFailures": 3,
           "ignoreHttp1xx": false
-        },
-        {
-          "portIndex": 2,
-          "protocol": "HTTP",
-          "path": "/info.json",
-          "gracePeriodSeconds": 30,
-          "intervalSeconds": 20,
-          "timeoutSeconds": 10,
-          "maxConsecutiveFailures": 3,
-          "ignoreHttp1xx": false
-        },
-        {
-          "portIndex": 3,
-          "protocol": "HTTP",
-          "path": "/status",
-          "gracePeriodSeconds": 30,
-          "intervalSeconds": 20,
-          "timeoutSeconds": 10,
-          "maxConsecutiveFailures": 3,
-          "ignoreHttp1xx": false
         }
-      ],
-      "readinessChecks": [
-        {
-          "name": "daskSchedulerReadinessCheck",
-          "protocol": "HTTP",
-          "path": "/info.json",
-          "portName": "dask-scheduler-http",
-          "intervalSeconds": 20,
-          "timeoutSeconds": 10,
-          "httpStatusCodesForReady": [ 200 ],
-          "preserveLastResponse": false
-        }
-      ],
-      "requirePorts": false,
-      "backoffSeconds": 1,
-      "backoffFactor": 1.15,
-      "maxLaunchDelaySeconds": 3600
+      ]
     },
     {
       "id": "/dask-distributed-jupyter/dask-worker",
       "instances": 1,
       "cpus": 1,
       "mem": 8192,
-      "cmd": "bash -c '(notebook.sh &) && sleep 5 && start-dask-worker.sh'",
+      "cmd": "bash -c 'start-dask-worker.sh'",
       "env": {
           "HOME": "/home/conda"
       },
       "container": {
         "type": "MESOS",
         "docker": {
-          "image": "vishnumohan/dask-distributed-dcos:0.12.0-1.14.3",
+          "image": "vishnumohan/dask-distributed-dcos",
           "forcePullImage": false
         }
       },
       "portDefinitions": [
-	{
-	  "protocol": "tcp",
-	  "port": 0,
-	  "name": "jupyter-notebook"
-	},
 	{
 	  "protocol": "tcp",
 	  "port": 0,
@@ -143,18 +102,8 @@
       ],
       "healthChecks": [
         {
-          "portIndex": 0,
-          "protocol": "HTTP",
-          "path": "/tree",
-          "gracePeriodSeconds": 30,
-          "intervalSeconds": 20,
-          "timeoutSeconds": 20,
-          "maxConsecutiveFailures": 3,
-          "ignoreHttp1xx": false
-        },
-        {
-          "portIndex": 2,
-          "protocol": "HTTP",
+          "portIndex": 1,
+          "protocol": "MESOS_HTTP",
           "path": "/info.json",
           "gracePeriodSeconds": 30,
           "intervalSeconds": 20,
@@ -163,22 +112,6 @@
           "ignoreHttp1xx": false
         }
       ],
-      "readinessChecks": [
-        {
-          "name": "daskWorkerReadinessCheck",
-          "protocol": "HTTP",
-          "path": "/info.json",
-          "portName": "dask-worker-http",
-          "intervalSeconds": 20,
-          "timeoutSeconds": 10,
-          "httpStatusCodesForReady": [ 200 ],
-          "preserveLastResponse": false
-        }
-      ],
-      "requirePorts": false,
-      "backoffSeconds": 1,
-      "backoffFactor": 1.15,
-      "maxLaunchDelaySeconds": 3600,
       "dependencies": [
         "/dask-distributed-jupyter/dask-scheduler"
       ]

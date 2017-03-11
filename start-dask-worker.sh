@@ -32,7 +32,7 @@ then
     )
     echo "Memory Limit in Bytes (1 Megabyte=1e6, 1 Gigabyte=1e9): ${NBYTES}"
 
-    DASK_SCHEDULER="${VIP_PREFIX}dask-scheduler.${FW_NAME}.l4lb.thisdcos.directory:8786"
+    DASK_SCHEDULER="${VIP_PREFIX}.dask-scheduler.${FW_NAME}.l4lb.thisdcos.directory:8786"
     echo "Dask Scheduler: ${DASK_SCHEDULER}"
 
     dask-worker \
