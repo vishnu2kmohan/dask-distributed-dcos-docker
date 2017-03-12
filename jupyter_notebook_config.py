@@ -20,7 +20,7 @@ if 'MARATHON_APP_ID' in os.environ:
     if all(key in os.environ for key in ('HAPROXY_GROUP',
                                          'HAPROXY_0_VHOST',
                                          'HAPROXY_0_PATH',
-                                         'HAPROXY_HAPROXY_0_HTTP_BACKEND_PROXYPASS_PATH')):
+                                         'HAPROXY_0_HTTP_BACKEND_PROXYPASS_PATH')):
         # Whether to trust or not X-Scheme/X-Forwarded-Proto and X-Real-Ip/X-Forwarded-
         # For headers sent by the upstream reverse proxy. Necessary if the proxy handles SSL
         c.NotebookApp.trust_xheaders = True
