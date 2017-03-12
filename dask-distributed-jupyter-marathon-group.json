@@ -13,8 +13,8 @@
       "labels": {
         "HAPROXY_GROUP": "external",
         "HAPROXY_0_VHOST": "<VHOST>",
-        "HAPROXY_0_PATH": "/dask-distributed-jupyter/dask-scheduler",
-        "HAPROXY_0_HTTP_BACKEND_PROXYPASS_PATH": "/lab"
+        "HAPROXY_0_PATH": "/dask-distributed-jupyter",
+        "HAPROXY_0_HTTP_BACKEND_PROXYPASS_PATH": "/dask-distributed-jupyter"
       },
       "container": {
         "type": "MESOS",
@@ -60,15 +60,12 @@
       "healthChecks": [
         {
           "portIndex": 0,
-          "protocol": "COMMAND",
-          "command": {
-            "value": "curl -fsSL -X GET http://$HOST:$PORT0/tree > /dev/null 2>&1"
-          },
+          "protocol": "MESOS_HTTP",
+          "path": "/tree",
           "gracePeriodSeconds": 30,
           "intervalSeconds": 20,
           "timeoutSeconds": 10,
-          "maxConsecutiveFailures": 3,
-          "ignoreHttp1xx": false
+          "maxConsecutiveFailures": 3
         }
       ]
     },
@@ -77,7 +74,7 @@
       "instances": 1,
       "cpus": 1,
       "mem": 8192,
-      "cmd": "bash -c 'start-dask-worker.sh'",
+      "cmd": "bash -c '(notebook.sh &) && sleep 5 && start-dask-worker.sh'",
       "env": {
         "HOME": "/home/conda"
       },
@@ -89,6 +86,11 @@
         }
       },
       "portDefinitions": [
+        {
+          "protocol": "tcp",
+          "port": 0,
+          "name": "jupyter-notebook"
+        },
         {
           "protocol": "tcp",
           "port": 0,
@@ -107,14 +109,13 @@
       ],
       "healthChecks": [
         {
-          "portIndex": 1,
+          "portIndex": 2,
           "protocol": "MESOS_HTTP",
           "path": "/info.json",
           "gracePeriodSeconds": 30,
           "intervalSeconds": 20,
           "timeoutSeconds": 10,
-          "maxConsecutiveFailures": 3,
-          "ignoreHttp1xx": false
+          "maxConsecutiveFailures": 3
         }
       ],
       "dependencies": [
