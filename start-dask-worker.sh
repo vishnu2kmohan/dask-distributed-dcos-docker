@@ -7,17 +7,17 @@ source activate dask-distributed
 
 if [ \( -n "${MARATHON_APP_ID-}" \) -a \( -n "${MARATHON_APP_RESOURCE_CPUS-}" \) \
     -a \( -n "${MESOS_TASK_ID-}" \) -a \( -n "${LIBPROCESS_IP-}" \) \
-    -a \( -n "${PORT1-}" \) -a \( -n "${PORT2-}" \) -a \( -n "${PORT3-}" \) ]
+    -a \( -n "${PORT0-}" \) -a \( -n "${PORT1-}" \) -a \( -n "${PORT2-}" \) ]
 then
     VIP_PREFIX=$(python -c \
-        "import os; print(''.join(os.environ['MARATHON_APP_ID'].split('/')[:-1]))" \
+        "import os; print('.'.join(os.environ['MARATHON_APP_ID'].split('/')[:-1]))" \
     )
     echo "DC/OS Named VIP Prefix: ${VIP_PREFIX}"
 
     NTHREADS=$(python -c \
         "import os,math; print(int(math.ceil(float(os.environ['MARATHON_APP_RESOURCE_CPUS']))))" \
     )
-    echo "Dask Number of Processes: ${NPROCS}"
+    echo "Dask Worker Threads: ${THREADS}"
 
     if [ -n "${DASK_FRAMEWORK_NAME-}" ]
     then
@@ -30,7 +30,7 @@ then
     NBYTES=$(python -c \
         "import os; print(''.join([str(int(float(os.environ['MARATHON_APP_RESOURCE_MEM']) * 0.8)), 'e6']))" \
     )
-    echo "Memory Limit in Bytes (1 Megabyte=1e6, 1 Gigabyte=1e9): ${NBYTES}"
+    echo "Dask Worker Memory Limit in Bytes (1 Megabyte=1e6, 1 Gigabyte=1e9): ${NBYTES}"
 
     DASK_SCHEDULER="${VIP_PREFIX}.dask-scheduler.${FW_NAME}.l4lb.thisdcos.directory:8786"
     echo "Dask Scheduler: ${DASK_SCHEDULER}"
@@ -39,9 +39,8 @@ then
         --worker-port "${PORT1}" \
         --http-port "${PORT2}" \
         --nanny-port "${PORT3}" \
-        --host "${LIBPROCESS_IP}" \
-        --nthreads "${NTHREADS}" \
         --nprocs "1" \
+        --nthreads "${NTHREADS}" \
         --memory-limit "${NBYTES}" \
         --name "${MESOS_TASK_ID}" \
         "${DASK_SCHEDULER}"
