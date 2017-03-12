@@ -7,7 +7,7 @@ source activate dask-distributed
 
 if [ \( -n "${MARATHON_APP_ID-}" \) -a \( -n "${MARATHON_APP_RESOURCE_CPUS-}" \) \
     -a \( -n "${MESOS_TASK_ID-}" \) -a \( -n "${LIBPROCESS_IP-}" \) \
-    -a \( -n "${PORT0-}" \) -a \( -n "${PORT1-}" \) -a \( -n "${PORT2-}" \) ]
+    -a \( -n "${PORT1-}" \) -a \( -n "${PORT2-}" \) -a \( -n "${PORT3-}" \) ]
 then
     VIP_PREFIX=$(python -c \
         "import os; print(''.join(os.environ['MARATHON_APP_ID'].split('/')[:-1]))" \
@@ -36,9 +36,9 @@ then
     echo "Dask Scheduler: ${DASK_SCHEDULER}"
 
     dask-worker \
-        --worker-port "${PORT0}" \
-        --http-port "${PORT1}" \
-        --nanny-port "${PORT2}" \
+        --worker-port "${PORT1}" \
+        --http-port "${PORT2}" \
+        --nanny-port "${PORT3}" \
         --nprocs "1" \
         --nthreads "${NTHREADS}" \
         --memory-limit "${NBYTES}" \
