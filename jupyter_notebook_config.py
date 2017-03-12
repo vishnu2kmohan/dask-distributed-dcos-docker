@@ -15,7 +15,6 @@ c.NotebookApp.open_browser = False
 if 'MARATHON_APP_ID' in os.environ:
     if 'PORT0' in os.environ:
         c.NotebookApp.port = int(os.environ['PORT0'])
-        c.NotebookApp.ip = os.environ['LIBPROCESS_IP']
 
 # Set a certificate if USE_HTTPS is set to any value
 if 'USE_HTTPS' in os.environ:
