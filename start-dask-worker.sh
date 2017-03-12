@@ -36,9 +36,9 @@ then
     echo "Dask Scheduler: ${DASK_SCHEDULER}"
 
     dask-worker \
-        --worker-port "${PORT1}" \
-        --http-port "${PORT2}" \
-        --nanny-port "${PORT3}" \
+        --worker-port "${PORT0}" \
+        --http-port "${PORT1}" \
+        --nanny-port "${PORT2}" \
         --nprocs "1" \
         --nthreads "${NTHREADS}" \
         --memory-limit "${NBYTES}" \
