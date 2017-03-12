@@ -10,7 +10,7 @@ if [ \( -n "${MARATHON_APP_ID-}" \) -a \( -n "${MARATHON_APP_RESOURCE_CPUS-}" \)
     -a \( -n "${PORT0-}" \) -a \( -n "${PORT1-}" \) -a \( -n "${PORT2-}" \) ]
 then
     VIP_PREFIX=$(python -c \
-        "import os; print('.'.join(os.environ['MARATHON_APP_ID'].split('/')[:-1]))" \
+        "import os; print(''.join(os.environ['MARATHON_APP_ID'].split('/')[:-1]))" \
     )
     echo "DC/OS Named VIP Prefix: ${VIP_PREFIX}"
 

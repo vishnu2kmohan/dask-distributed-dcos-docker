@@ -8,10 +8,13 @@
       "mem": 1024,
       "cmd": "bash -c '(start-dask-scheduler.sh &) && sleep 5 && notebook.sh'",
       "env": {
-          "HOME": "/home/conda"
+        "HOME": "/home/conda"
       },
       "labels": {
-        "HAPROXY_GROUP": "external"
+        "HAPROXY_GROUP": "external",
+        "HAPROXY_0_VHOST": "<VHOST>",
+        "HAPROXY_0_PATH": "/dask-distributed-jupyter/dask-scheduler",
+        "HAPROXY_0_HTTP_BACKEND_PROXYPASS_PATH": "/lab"
       },
       "container": {
         "type": "MESOS",
@@ -21,44 +24,46 @@
         }
       },
       "portDefinitions": [
-	{
-	  "protocol": "tcp",
-	  "port": 0,
-	  "labels": {
-	    "VIP_0": "/dask-distributed-jupyter.dask-scheduler:8888"
-	  },
-	  "name": "jupyter-notebook"
-	},
-	{
-	  "protocol": "tcp",
-	  "port": 0,
-	  "labels": {
-	    "VIP_1": "/dask-distributed-jupyter.dask-scheduler:8786"
-	  },
-	  "name": "dask-scheduler"
-	},
-	{
-	  "protocol": "tcp",
-	  "port": 0,
-	  "labels": {
-	    "VIP_2": "/dask-distributed-jupyter.dask-scheduler:9786"
-	  },
-	  "name": "dask-scheduler-http"
-	},
-	{
-	  "protocol": "tcp",
-	  "port": 0,
-	  "labels": {
-	    "VIP_3": "/dask-distributed-jupyter.dask-scheduler:8787"
-	  },
-	  "name": "dask-scheduler-bokeh"
-	}
+        {
+          "protocol": "tcp",
+          "port": 0,
+          "labels": {
+            "VIP_0": "/dask-distributed-jupyter.dask-scheduler:8888"
+          },
+          "name": "jupyter-notebook"
+        },
+        {
+          "protocol": "tcp",
+          "port": 0,
+          "labels": {
+            "VIP_1": "/dask-distributed-jupyter.dask-scheduler:8786"
+          },
+          "name": "dask-scheduler"
+        },
+        {
+          "protocol": "tcp",
+          "port": 0,
+          "labels": {
+            "VIP_2": "/dask-distributed-jupyter.dask-scheduler:9786"
+          },
+          "name": "dask-scheduler-http"
+        },
+        {
+          "protocol": "tcp",
+          "port": 0,
+          "labels": {
+            "VIP_3": "/dask-distributed-jupyter.dask-scheduler:8787"
+          },
+          "name": "dask-scheduler-bokeh"
+        }
       ],
       "healthChecks": [
         {
           "portIndex": 0,
-          "protocol": "MESOS_HTTP",
-          "path": "/tree",
+          "protocol": "COMMAND",
+          "command": {
+            "value": "curl -fsSL -X GET http://$HOST:$PORT0/tree > /dev/null 2>&1"
+          },
           "gracePeriodSeconds": 30,
           "intervalSeconds": 20,
           "timeoutSeconds": 10,
@@ -74,7 +79,7 @@
       "mem": 8192,
       "cmd": "bash -c 'start-dask-worker.sh'",
       "env": {
-          "HOME": "/home/conda"
+        "HOME": "/home/conda"
       },
       "container": {
         "type": "MESOS",
@@ -84,21 +89,21 @@
         }
       },
       "portDefinitions": [
-	{
-	  "protocol": "tcp",
-	  "port": 0,
-	  "name": "dask-worker"
-	},
-	{
-	  "protocol": "tcp",
-	  "port": 0,
-	  "name": "dask-worker-http"
-	},
-	{
-	  "protocol": "tcp",
-	  "port": 0,
-	  "name": "dask-worker-nanny"
-	}
+        {
+          "protocol": "tcp",
+          "port": 0,
+          "name": "dask-worker"
+        },
+        {
+          "protocol": "tcp",
+          "port": 0,
+          "name": "dask-worker-http"
+        },
+        {
+          "protocol": "tcp",
+          "port": 0,
+          "name": "dask-worker-nanny"
+        }
       ],
       "healthChecks": [
         {
