@@ -28,20 +28,13 @@ if 'MARATHON_APP_ID' in os.environ:
     c.NotebookApp.base_url = marathon_path_prefix
 
     # Allow CORS and TLS from behind Marathon-LB/HAProxy
-    if all(key in os.environ
-            for key in ('HAPROXY_GROUP',
-                        'HAPROXY_0_VHOST',
-                        'HAPROXY_0_PATH',
-                        'HAPROXY_0_HTTP_BACKEND_PROXYPASS_PATH')):
-
-        c.NotebookApp.allow_origin = 'http://{}'.format(os.environ['HAPROXY_0_VHOST'])
-
-        # Trust X-Scheme/X-Forwarded-Proto and X-Real-Ip/X-Forwarded-For
-        # Necessary if the proxy handles SSL
+    # Trust X-Scheme/X-Forwarded-Proto and X-Real-Ip/X-Forwarded-For
+    # Necessary if the proxy handles SSL
+    if 'HAPROXY_GROUP' in os.environ:
         c.NotebookApp.trust_xheaders = True
 
-        # Set the Jupyter Notebook Server base URL to the HAPROXY_0_PATH
-        c.NotebookApp.base_url = os.environ['HAPROXY_0_PATH']
+    if 'HAPROXY_VHOST' in os.environ:
+        c.NotebookApp.allow_origin = 'http://{}'.format(os.environ['HAPROXY_0_VHOST'])
 
     if 'HAPROXY_0_REDIRECT_TO_HTTPS' in os.environ:
         c.NotebookApp.allow_origin = 'https://{}'.format(os.environ['HAPROXY_0_VHOST'])
