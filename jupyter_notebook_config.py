@@ -16,20 +16,31 @@ if 'MARATHON_APP_ID' in os.environ:
     if 'PORT0' in os.environ:
         c.NotebookApp.port = int(os.environ['PORT0'])
 
+    # Default the Jupyter Notebook Server password to the Marathon app prefix
+    marathon_app_prefix = ''.join(os.environ['MARATHON_APP_ID'].split('/')[:-1])
+    c.NotebookApp.password = passwd(marathon_app_prefix)
+
+    # Default the Jupyter Notebook server base URL to the Marathon path prefix
+    marathon_path_prefix = '/'.join(os.environ['MARATHON_APP_ID'].split('/')[:-1])
+    c.NotebookApp.base_url = marathon_path_prefix
+
     # Allow CORS and TLS from behind Marathon-LB/HAProxy
-    if all(key in os.environ for key in ('HAPROXY_GROUP',
-                                         'HAPROXY_0_VHOST',
-                                         'HAPROXY_0_PATH',
-                                         'HAPROXY_0_HTTP_BACKEND_PROXYPASS_PATH')):
-        # Whether to trust or not X-Scheme/X-Forwarded-Proto and X-Real-Ip/X-Forwarded-
-        # For headers sent by the upstream reverse proxy. Necessary if the proxy handles SSL
+    if all(key in os.environ
+            for key in ('HAPROXY_GROUP',
+                        'HAPROXY_0_VHOST',
+                        'HAPROXY_0_PATH',
+                        'HAPROXY_0_HTTP_BACKEND_PROXYPASS_PATH')):
+        # Whether to trust or not X-Scheme/X-Forwarded-Proto
+        # and X-Real-Ip/X-Forwarded-
+        # For headers sent by the upstream reverse proxy.
+        # Necessary if the proxy handles SSL
         c.NotebookApp.trust_xheaders = True
+
         # Set the Access-Control-Allow-Origin header
         c.NotebookApp.allow_origin = '*'
 
-    # Default the Jupyter Notebook password to the Marathon app prefix
-    marathon_app_prefix = ''.join(os.environ['MARATHON_APP_ID'].split('/')[:-1])
-    c.NotebookApp.password = passwd(marathon_app_prefix)
+        # Set the Jupyter Notebook Server base URL to the HAPROXY_0_PATH
+        c.NotebookApp.base_url = os.environ['HAPROXY_0_PATH']
 
 # Set a certificate if USE_HTTPS is set to any value
 PEM_FILE = os.path.join(jupyter_data_dir(), 'notebook.pem')
@@ -45,9 +56,9 @@ if 'USE_HTTPS' in os.environ:
             else:
                 raise
         # Generate a certificate if one doesn't exist on disk
-        subprocess.check_call(['openssl', 'req', '-new',
-                               '-newkey', 'rsa:2048', '-days', '365', '-nodes', '-x509',
-                               '-subj', '/C=XX/ST=XX/L=XX/O=generated/CN=generated',
+        subprocess.check_call(['openssl', 'req', '-new', '-newkey', 'rsa:2048',
+                               '-days', '365', '-nodes', '-x509', '-subj',
+                               '/C=XX/ST=XX/L=XX/O=generated/CN=generated',
                                '-keyout', PEM_FILE, '-out', PEM_FILE])
         # Restrict access to PEM_FILE
         os.chmod(PEM_FILE, stat.S_IRUSR | stat.S_IWUSR)
