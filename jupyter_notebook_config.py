@@ -16,6 +16,9 @@ if 'MARATHON_APP_ID' in os.environ:
     if 'PORT0' in os.environ:
         c.NotebookApp.port = int(os.environ['PORT0'])
 
+    # Set the Access-Control-Allow-Origin header
+    c.NotebookApp.allow_origin = '*'
+
     # Default the Jupyter Notebook Server password to the Marathon app prefix
     marathon_app_prefix = ''.join(os.environ['MARATHON_APP_ID'].split('/')[:-1])
     c.NotebookApp.password = passwd(marathon_app_prefix)
@@ -30,17 +33,18 @@ if 'MARATHON_APP_ID' in os.environ:
                         'HAPROXY_0_VHOST',
                         'HAPROXY_0_PATH',
                         'HAPROXY_0_HTTP_BACKEND_PROXYPASS_PATH')):
-        # Whether to trust or not X-Scheme/X-Forwarded-Proto
-        # and X-Real-Ip/X-Forwarded-
-        # For headers sent by the upstream reverse proxy.
+
+        c.NotebookApp.allow_origin = 'http://{}'.format(os.environ['HAPROXY_0_VHOST'])
+
+        # Trust X-Scheme/X-Forwarded-Proto and X-Real-Ip/X-Forwarded-For
         # Necessary if the proxy handles SSL
         c.NotebookApp.trust_xheaders = True
 
-        # Set the Access-Control-Allow-Origin header
-        c.NotebookApp.allow_origin = '*'
-
         # Set the Jupyter Notebook Server base URL to the HAPROXY_0_PATH
         c.NotebookApp.base_url = os.environ['HAPROXY_0_PATH']
+
+    if 'HAPROXY_0_REDIRECT_TO_HTTPS' in os.environ:
+        c.NotebookApp.allow_origin = 'https://{}'.format(os.environ['HAPROXY_0_VHOST'])
 
 # Set a certificate if USE_HTTPS is set to any value
 PEM_FILE = os.path.join(jupyter_data_dir(), 'notebook.pem')
