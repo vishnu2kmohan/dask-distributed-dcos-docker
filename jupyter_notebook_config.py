@@ -19,8 +19,10 @@ if 'MARATHON_APP_ID' in os.environ:
     # Set the Access-Control-Allow-Origin header
     c.NotebookApp.allow_origin = '*'
 
-    # Default the Jupyter Notebook Server password to the Marathon app prefix
-    c.NotebookApp.password = passwd(marathon_app_prefix)
+    # Set Jupyter Notebook Server password to 'jupyter-<Marathon-App-Prefix>'
+    # e.g., Marathon App ID '/foo/bar/app' maps to password: 'jupyter-foo-bar'
+    marathon_app_prefix = '-'.join(os.environ['MARATHON_APP_ID'].split('/')[:-1])
+    c.NotebookApp.password = passwd('jupyter{}'.format(marathon_app_prefix))
 
     # Allow CORS and TLS from behind Marathon-LB/HAProxy
     # Trust X-Scheme/X-Forwarded-Proto and X-Real-Ip/X-Forwarded-For
