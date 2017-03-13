@@ -24,8 +24,8 @@ if 'MARATHON_APP_ID' in os.environ:
     c.NotebookApp.password = passwd(marathon_app_prefix)
 
     # Default the Jupyter Notebook server base URL to the Marathon path prefix
-    marathon_path_prefix = '/'.join(os.environ['MARATHON_APP_ID'].split('/')[:-1])
-    c.NotebookApp.base_url = marathon_path_prefix
+    #marathon_path_prefix = '/'.join(os.environ['MARATHON_APP_ID'].split('/')[:-1])
+    #c.NotebookApp.base_url = marathon_path_prefix
 
     # Allow CORS and TLS from behind Marathon-LB/HAProxy
     # Trust X-Scheme/X-Forwarded-Proto and X-Real-Ip/X-Forwarded-For
