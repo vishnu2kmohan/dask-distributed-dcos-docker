@@ -20,12 +20,7 @@ if 'MARATHON_APP_ID' in os.environ:
     c.NotebookApp.allow_origin = '*'
 
     # Default the Jupyter Notebook Server password to the Marathon app prefix
-    marathon_app_prefix = ''.join(os.environ['MARATHON_APP_ID'].split('/')[:-1])
     c.NotebookApp.password = passwd(marathon_app_prefix)
-
-    # Default the Jupyter Notebook server base URL to the Marathon path prefix
-    #marathon_path_prefix = '/'.join(os.environ['MARATHON_APP_ID'].split('/')[:-1])
-    #c.NotebookApp.base_url = marathon_path_prefix
 
     # Allow CORS and TLS from behind Marathon-LB/HAProxy
     # Trust X-Scheme/X-Forwarded-Proto and X-Real-Ip/X-Forwarded-For
@@ -38,6 +33,10 @@ if 'MARATHON_APP_ID' in os.environ:
 
     if 'HAPROXY_0_REDIRECT_TO_HTTPS' in os.environ:
         c.NotebookApp.allow_origin = 'https://{}'.format(os.environ['HAPROXY_0_VHOST'])
+
+    # Set the Jupyter Notebook server base URL to the HAPROXY_PATH specified
+    if 'HAPROXY_0_PATH' in os.environ:
+        c.NotebookApp.base_url = os.environ['HAPROXY_0_PATH']
 
 # Set a certificate if USE_HTTPS is set to any value
 PEM_FILE = os.path.join(jupyter_data_dir(), 'notebook.pem')
