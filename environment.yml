@@ -84,6 +84,7 @@ dependencies:
 - llvmlite
 - locket
 - markupsafe
+- matplotlib
 - mccabe
 - mistune
 - mock
@@ -101,6 +102,7 @@ dependencies:
 - openssl
 - pamela
 - pandas
+- pandas-datareader
 - pandoc
 - pandocfilters
 - pango
