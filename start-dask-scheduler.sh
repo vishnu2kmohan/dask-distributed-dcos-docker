@@ -11,6 +11,7 @@ if [ \( -n "${MARATHON_APP_ID-}" \) -a \( -n "${HOST-}" \) \
 then
     dask-scheduler \
         --host "*" \
+        --use-xheaders "True" \
         --port "${PORT1}" \
         --http-port "${PORT2}" \
         --bokeh-port "${PORT3}" \
