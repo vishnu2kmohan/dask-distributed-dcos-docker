@@ -126,6 +126,11 @@
           "protocol": "tcp",
           "port": 0,
           "name": "dask-worker-nanny"
+        },
+        {
+          "protocol": "tcp",
+          "port": 0,
+          "name": "dask-worker-bokeh"
         }
       ],
       "healthChecks": [

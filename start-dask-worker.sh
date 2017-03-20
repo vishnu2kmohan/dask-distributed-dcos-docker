@@ -6,8 +6,9 @@ source "$HOME/.bash_profile"
 source activate dask-distributed
 
 if [ \( -n "${MARATHON_APP_ID-}" \) -a \( -n "${MARATHON_APP_RESOURCE_CPUS-}" \) \
-    -a \( -n "${MESOS_TASK_ID-}" \) -a \( -n "${LIBPROCESS_IP-}" \) \
-    -a \( -n "${PORT1-}" \) -a \( -n "${PORT2-}" \) -a \( -n "${PORT3-}" \) ]
+    -a \( -n "${MESOS_TASK_ID-}" \) -a \( -n "${HOST-}" \) \
+    -a \( -n "${PORT1-}" \) -a \( -n "${PORT2-}" \) \
+    -a \( -n "${PORT3-}" \) -a \( -n "${PORT4-}" \) ]
 then
     VIP_PREFIX=$(python -c \
         "import os; print('.'.join(os.environ['MARATHON_APP_ID'].split('/')[1:-1]))" \
@@ -17,7 +18,7 @@ then
     NTHREADS=$(python -c \
         "import os,math; print(int(math.ceil(float(os.environ['MARATHON_APP_RESOURCE_CPUS']))))" \
     )
-    echo "Dask Worker Threads: ${THREADS}"
+    echo "Dask Worker Threads: ${NTHREADS}"
 
     if [ -n "${DASK_FRAMEWORK_NAME-}" ]
     then
@@ -40,6 +41,7 @@ then
         --worker-port "${PORT1}" \
         --http-port "${PORT2}" \
         --nanny-port "${PORT3}" \
+        --bokeh-port "${PORT4}" \
         --nprocs "1" \
         --nthreads "${NTHREADS}" \
         --memory-limit "${NBYTES}" \
