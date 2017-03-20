@@ -14,7 +14,7 @@
         "MARATHON_SINGLE_INSTANCE_APP": "true",
         "HAPROXY_GROUP": "external",
         "HAPROXY_0_ENABLED": "true",
-        "HAPROXY_0_VHOST": "<VHOST>",
+        "HAPROXY_0_VHOST": "vhost.example.com",
         "HAPROXY_0_PATH": "/dask-distributed-jupyter"
       },
       "container": {
@@ -58,6 +58,10 @@
           "name": "dask-scheduler-bokeh"
         }
       ],
+      "upgradeStrategy": {
+        "minimumHealthCapacity": 0,
+        "maximumOverCapacity": 0
+      },
       "healthChecks": [
         {
           "portIndex": 0,
