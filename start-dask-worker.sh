@@ -36,7 +36,7 @@ then
     echo "Dask Scheduler: ${DASK_SCHEDULER}"
 
     dask-worker \
-        --host "${LIBPROCESS_IP}" \
+        --host "*" \
         --worker-port "${PORT1}" \
         --http-port "${PORT2}" \
         --nanny-port "${PORT3}" \
