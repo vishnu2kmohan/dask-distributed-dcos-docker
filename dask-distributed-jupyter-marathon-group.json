@@ -15,15 +15,11 @@
         "HAPROXY_GROUP": "external",
         "HAPROXY_0_ENABLED": "true",
         "HAPROXY_0_VHOST": "vhost.example.com",
-        "HAPROXY_0_PATH": "/dask-distributed-jupyter-notebok",
+        "HAPROXY_0_PATH": "/dask-distributed-jupyter-notebook",
         "HAPROXY_3_ENABLED": "true",
         "HAPROXY_3_VHOST": "vhost.example.com",
         "HAPROXY_3_PATH": "/dask-distributed-jupyter-dask",
-        "HAPROXY_3_HTTP_BACKEND_PROXYPASS_PATH": "/dask-distributed-jupyter-dask",
-        "HAPROXY_4_ENABLED": "true",
-        "HAPROXY_4_VHOST": "vhost.example.com",
-        "HAPROXY_4_PATH": "/dask-distributed-jupyter-dask-debug",
-        "HAPROXY_4_HTTP_BACKEND_PROXYPASS_PATH": "/dask-distributed-jupyter-dask-debug"
+        "HAPROXY_3_HTTP_BACKEND_PROXYPASS_PATH": "/dask-distributed-jupyter-dask"
       },
       "container": {
         "type": "MESOS",
@@ -82,7 +78,7 @@
         {
           "portIndex": 0,
           "protocol": "MESOS_HTTP",
-          "path": "/dask-distributed-jupyter/jupyter/api",
+          "path": "/dask-distributed-jupyter-notebook/api",
           "gracePeriodSeconds": 30,
           "intervalSeconds": 20,
           "timeoutSeconds": 10,
