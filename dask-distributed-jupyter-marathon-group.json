@@ -5,7 +5,7 @@
       "id": "/dask-distributed-jupyter/dask-scheduler",
       "instances": 1,
       "cpus": 1,
-      "mem": 1024,
+      "mem": 2048,
       "cmd": "bash -c '(start-dask-scheduler.sh &) && sleep 5 && notebook.sh'",
       "env": {
         "HOME": "/home/conda"
@@ -15,7 +15,15 @@
         "HAPROXY_GROUP": "external",
         "HAPROXY_0_ENABLED": "true",
         "HAPROXY_0_VHOST": "vhost.example.com",
-        "HAPROXY_0_PATH": "/dask-distributed-jupyter"
+        "HAPROXY_0_PATH": "/dask-distributed-jupyter/jupyter",
+        "HAPROXY_3_ENABLED": "true",
+        "HAPROXY_3_VHOST": "vhost.example.com",
+        "HAPROXY_3_PATH": "/dask-distributed-jupyter/dask",
+        "HAPROXY_3_HTTP_BACKEND_PROXYPASS_PATH": "/dask-distributed-jupyter/dask",
+        "HAPROXY_4_ENABLED": "true",
+        "HAPROXY_4_VHOST": "vhost.example.com",
+        "HAPROXY_4_PATH": "/dask-distributed-jupyter/dask-debug",
+        "HAPROXY_4_HTTP_BACKEND_PROXYPASS_PATH": "/dask-distributed-jupyter/dask-debug"
       },
       "container": {
         "type": "MESOS",
@@ -56,6 +64,14 @@
             "VIP_3": "/dask-distributed-jupyter.dask-scheduler:8787"
           },
           "name": "dask-scheduler-bokeh"
+        },
+        {
+          "protocol": "tcp",
+          "port": 0,
+          "labels": {
+            "VIP_4": "/dask-distributed-jupyter.dask-scheduler:8788"
+          },
+          "name": "dask-scheduler-bokeh-internal"
         }
       ],
       "upgradeStrategy": {
@@ -66,7 +82,7 @@
         {
           "portIndex": 0,
           "protocol": "MESOS_HTTP",
-          "path": "/dask-distributed-jupyter/api",
+          "path": "/dask-distributed-jupyter/jupyter/api",
           "gracePeriodSeconds": 30,
           "intervalSeconds": 20,
           "timeoutSeconds": 10,
@@ -77,8 +93,8 @@
     {
       "id": "/dask-distributed-jupyter/dask-worker",
       "instances": 1,
-      "cpus": 1,
-      "mem": 8192,
+      "cpus": 2,
+      "mem": 4096,
       "cmd": "bash -c '(notebook.sh &) && sleep 5 && start-dask-worker.sh'",
       "env": {
         "HOME": "/home/conda"

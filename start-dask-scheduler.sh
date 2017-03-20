@@ -15,9 +15,11 @@ then
     echo "Dask Scheduler App Prefix: ${SCHEDULER_APP_PREFIX}"
 
     dask-scheduler \
+        --host "${HOST}" \
         --port "${PORT1}" \
         --http-port "${PORT2}" \
         --bokeh-port "${PORT3}" \
+        --bokeh-internal-port "${PORT4}" \
         --use-xheaders "True" \
         --prefix "${SCHEDULER_APP_PREFIX}"
 else
