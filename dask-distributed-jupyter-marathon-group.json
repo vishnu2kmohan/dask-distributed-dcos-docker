@@ -11,16 +11,17 @@
         "HOME": "/home/conda"
       },
       "labels": {
+        "MARATHON_SINGLE_INSTANCE_APP": "true",
         "HAPROXY_GROUP": "external",
+        "HAPROXY_0_ENABLED": "true",
         "HAPROXY_0_VHOST": "<VHOST>",
-        "HAPROXY_0_PATH": "/dask-distributed-jupyter",
-        "HAPROXY_0_HTTP_BACKEND_PROXYPASS_PATH": "/dask-distributed-jupyter"
+        "HAPROXY_0_PATH": "/dask-distributed-jupyter"
       },
       "container": {
         "type": "MESOS",
         "docker": {
           "image": "vishnumohan/dask-distributed-dcos",
-          "forcePullImage": false
+          "forcePullImage": true
         }
       },
       "portDefinitions": [
@@ -61,7 +62,7 @@
         {
           "portIndex": 0,
           "protocol": "MESOS_HTTP",
-          "path": "/tree",
+          "path": "/api",
           "gracePeriodSeconds": 30,
           "intervalSeconds": 20,
           "timeoutSeconds": 10,
@@ -82,7 +83,7 @@
         "type": "MESOS",
         "docker": {
           "image": "vishnumohan/dask-distributed-dcos",
-          "forcePullImage": false
+          "forcePullImage": true
         }
       },
       "portDefinitions": [

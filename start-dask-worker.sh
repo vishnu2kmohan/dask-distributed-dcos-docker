@@ -10,7 +10,7 @@ if [ \( -n "${MARATHON_APP_ID-}" \) -a \( -n "${MARATHON_APP_RESOURCE_CPUS-}" \)
     -a \( -n "${PORT1-}" \) -a \( -n "${PORT2-}" \) -a \( -n "${PORT3-}" \) ]
 then
     VIP_PREFIX=$(python -c \
-        "import os; print(''.join(os.environ['MARATHON_APP_ID'].split('/')[:-1]))" \
+        "import os; print('.'.join(os.environ['MARATHON_APP_ID'].split('/')[1:-1]))" \
     )
     echo "DC/OS Named VIP Prefix: ${VIP_PREFIX}"
 
@@ -44,6 +44,7 @@ then
         --nthreads "${NTHREADS}" \
         --memory-limit "${NBYTES}" \
         --name "${MESOS_TASK_ID}" \
+        --local-directory "${MESOS_SANDBOX}" \
         "${DASK_SCHEDULER}"
 else
     dask-worker "$@"
