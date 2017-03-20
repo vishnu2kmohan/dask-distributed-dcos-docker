@@ -15,7 +15,7 @@ then
     echo "Dask Scheduler App Prefix: ${SCHEDULER_APP_PREFIX}"
 
     dask-scheduler \
-        --host "${HOST}" \
+        --host "*" \
         --port "${PORT1}" \
         --http-port "${PORT2}" \
         --bokeh-port "${PORT3}" \
