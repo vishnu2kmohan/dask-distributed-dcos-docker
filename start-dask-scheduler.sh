@@ -9,13 +9,7 @@ if [ \( -n "${MARATHON_APP_ID-}" \) -a \( -n "${HOST-}" \) \
     -a \( -n "${PORT1-}" \) -a \( -n "${PORT2-}" \) \
     -a \( -n "${PORT3-}" \) -a \( -n "${PORT4-}" \) ]
 then
-    DASK_HOST="*"
     BOKEH_WHITELIST="*"
-
-    if [ -n "${MARATHON_APP_LABEL_HAPROXY_0_VHOST-}" ]
-    then
-        DASK_HOST="${MARATHON_APP_LABEL_HAPROXY_0_VHOST}"
-    fi
 
     if [ -n "${MARATHON_APP_LABEL_HAPROXY_3_VHOST-}" ]
     then
@@ -23,7 +17,6 @@ then
     fi
 
     dask-scheduler \
-        --host "${DASK_HOST}" \
         --bokeh-whitelist "${BOKEH_WHITELIST}" \
         --use-xheaders "True" \
         --port "${PORT1}" \
