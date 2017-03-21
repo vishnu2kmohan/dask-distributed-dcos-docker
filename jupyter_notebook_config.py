@@ -31,7 +31,7 @@ if 'MARATHON_APP_ID' in os.environ:
     if 'MARATHON_APP_LABEL_HAPROXY_GROUP' in os.environ:
         c.NotebookApp.trust_xheaders = True
 
-    if 'MARATHON_APP_LABEL_HAPROXY_VHOST' in os.environ:
+    if 'MARATHON_APP_LABEL_HAPROXY_0_VHOST' in os.environ:
         c.NotebookApp.allow_origin = \
             'http://{}'.format(
                 os.environ['MARATHON_APP_LABEL_HAPROXY_0_VHOST']
