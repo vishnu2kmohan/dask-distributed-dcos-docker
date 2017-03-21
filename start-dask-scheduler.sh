@@ -29,7 +29,7 @@ then
         --http-port "${PORT2}" \
         --bokeh-port "${PORT3}" \
         --bokeh-internal-port "${PORT4}" \
-        --prefix "{BOKEH_APP_PREFIX}"
+        --prefix "${BOKEH_APP_PREFIX}"
 else
     dask-scheduler "$@"
 fi
