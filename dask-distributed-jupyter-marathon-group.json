@@ -1,8 +1,8 @@
 {
-  "id": "/dask-distributed-jupyter",
+  "id": "/dask-distributed",
   "apps": [
     {
-      "id": "/dask-distributed-jupyter/dask-scheduler",
+      "id": "/dask-distributed/dask-scheduler",
       "instances": 1,
       "cpus": 1,
       "mem": 2048,
@@ -15,11 +15,10 @@
         "HAPROXY_GROUP": "external",
         "HAPROXY_0_ENABLED": "true",
         "HAPROXY_0_VHOST": "vhost.example.com",
-        "HAPROXY_0_PATH": "/dask-distributed-jupyter-notebook",
+        "HAPROXY_0_PATH": "/dask-distributed/jupyter",
         "HAPROXY_3_ENABLED": "true",
         "HAPROXY_3_VHOST": "vhost.example.com",
-        "HAPROXY_3_PATH": "/dask-distributed-jupyter-dask",
-        "HAPROXY_3_HTTP_BACKEND_PROXYPASS_PATH": "/dask-distributed-jupyter-dask"
+        "HAPROXY_3_PATH": "/dask-distributed/web"
       },
       "container": {
         "type": "MESOS",
@@ -33,15 +32,15 @@
           "protocol": "tcp",
           "port": 0,
           "labels": {
-            "VIP_0": "/dask-distributed-jupyter.dask-scheduler:8888"
+            "VIP_0": "/dask-distributed.dask-scheduler:8888"
           },
-          "name": "jupyter-notebook"
+          "name": "jupyter"
         },
         {
           "protocol": "tcp",
           "port": 0,
           "labels": {
-            "VIP_1": "/dask-distributed-jupyter.dask-scheduler:8786"
+            "VIP_1": "/dask-distributed.dask-scheduler:8786"
           },
           "name": "dask-scheduler"
         },
@@ -49,7 +48,7 @@
           "protocol": "tcp",
           "port": 0,
           "labels": {
-            "VIP_2": "/dask-distributed-jupyter.dask-scheduler:9786"
+            "VIP_2": "/dask-distributed.dask-scheduler:9786"
           },
           "name": "dask-scheduler-http"
         },
@@ -57,7 +56,7 @@
           "protocol": "tcp",
           "port": 0,
           "labels": {
-            "VIP_3": "/dask-distributed-jupyter.dask-scheduler:8787"
+            "VIP_3": "/dask-distributed.dask-scheduler:8787"
           },
           "name": "dask-scheduler-bokeh"
         },
@@ -65,7 +64,7 @@
           "protocol": "tcp",
           "port": 0,
           "labels": {
-            "VIP_4": "/dask-distributed-jupyter.dask-scheduler:8788"
+            "VIP_4": "/dask-distributed.dask-scheduler:8788"
           },
           "name": "dask-scheduler-bokeh-internal"
         }
@@ -78,7 +77,7 @@
         {
           "portIndex": 0,
           "protocol": "MESOS_HTTP",
-          "path": "/dask-distributed-jupyter-notebook/api",
+          "path": "/dask-distributed/jupyter/api",
           "gracePeriodSeconds": 30,
           "intervalSeconds": 20,
           "timeoutSeconds": 10,
@@ -87,7 +86,7 @@
       ]
     },
     {
-      "id": "/dask-distributed-jupyter/dask-worker",
+      "id": "/dask-distributed/dask-worker",
       "instances": 1,
       "cpus": 2,
       "mem": 4096,
@@ -106,7 +105,7 @@
         {
           "protocol": "tcp",
           "port": 0,
-          "name": "jupyter-notebook"
+          "name": "jupyter"
         },
         {
           "protocol": "tcp",
@@ -141,7 +140,7 @@
         }
       ],
       "dependencies": [
-        "/dask-distributed-jupyter/dask-scheduler"
+        "/dask-distributed/dask-scheduler"
       ]
     }
   ]
