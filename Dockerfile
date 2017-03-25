@@ -4,10 +4,7 @@ MAINTAINER Vishnu Mohan <vishnu@mesosphere.com>
 
 COPY environment.yml "$CONDA_USER_HOME/work"
 RUN $CONDA_USER_HOME/conda/bin/conda env create --json -q -f environment.yml \
-    && $CONDA_USER_HOME/conda/bin/conda clean --json -y --tarballs --packages \
-    && bash --login -c "source activate dask-distributed \
-    && jupyter nbextension enable vega --py --sys-prefix \
-    && source deactivate"
+    && $CONDA_USER_HOME/conda/bin/conda clean --json -tipsy
 
 EXPOSE 8888 8786 8787 9786
 CMD ["notebook.sh"]
