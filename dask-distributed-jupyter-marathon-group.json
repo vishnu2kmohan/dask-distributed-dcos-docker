@@ -23,8 +23,8 @@
       "container": {
         "type": "MESOS",
         "docker": {
-          "image": "vishnumohan/dask-distributed-dcos",
-          "forcePullImage": true
+          "image": "vishnumohan/dask-distributed-dcos:0.14.1-1.16.1-1.9",
+          "forcePullImage": false
         }
       },
       "portDefinitions": [
@@ -97,8 +97,8 @@
       "container": {
         "type": "MESOS",
         "docker": {
-          "image": "vishnumohan/dask-distributed-dcos",
-          "forcePullImage": true
+          "image": "vishnumohan/dask-distributed-dcos:0.14.1-1.16.1-1.9",
+          "forcePullImage": false
         }
       },
       "portDefinitions": [
