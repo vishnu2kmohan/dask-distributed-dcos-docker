@@ -62,6 +62,7 @@ then
         --name "${MESOS_TASK_ID}" \
         --local-directory "${MESOS_SANDBOX}" \
         --resources "${DASK_RESOURCES}" \
+        --death-timeout "180" \
         "${DASK_SCHEDULER}"
 else
     dask-worker "$@"
