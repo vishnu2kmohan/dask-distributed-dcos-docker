@@ -2,7 +2,7 @@
 
 [Dask](http://dask.pydata.org//) and:
 [Distributed](https://distributed.readthedocs.io) designed to work with:
-[DC/OS]:(https://dcos.io) along with:
+[DC/OS](https://dcos.io) along with:
 [Jupyter](http://jupyter.org/) Notebook built on:
 - [Miniconda Python 3](http://conda.pydata.org/miniconda.html)
 - [debian:jessie](https://hub.docker.com/r/library/debian/)
