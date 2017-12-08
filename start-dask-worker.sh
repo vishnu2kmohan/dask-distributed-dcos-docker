@@ -2,7 +2,7 @@
 
 set -o errexit -o pipefail
 
-source "$HOME/.bash_profile"
+source "${HOME}/.bash_profile"
 source activate dask-distributed
 
 if [ \( -n "${MARATHON_APP_ID-}" \) \
@@ -10,8 +10,8 @@ if [ \( -n "${MARATHON_APP_ID-}" \) \
     -a \( -n "${MARATHON_APP_RESOURCE_MEM-}" \) \
     -a \( -n "${MARATHON_APP_RESOURCE_DISK-}" \) \
     -a \( -n "${MESOS_TASK_ID-}" \) -a \( -n "${HOST-}" \) \
-    -a \( -n "${PORT1-}" \) -a \( -n "${PORT2-}" \) \
-    -a \( -n "${PORT3-}" \) -a \( -n "${PORT4-}" \) ]
+    -a \( -n "${PORT_WORKER-}" \) -a \( -n "${PORT_NANNY-}" \) \
+    -a \( -n "${PORT_BOKEH-}" \) ]
 then
     VIP_PREFIX=$(python -c \
         "import os; print('.'.join(os.environ['MARATHON_APP_ID'].split('/')[1:-1]))" \
@@ -51,15 +51,17 @@ then
     echo "Dask Resources: ${DASK_RESOURCES}"
 
     dask-worker \
+        --tls-ca-file "${MESOS_SANDBOX}/.ssl/ca-bundle.crt" \
+        --tls-cert "${MESOS_SANDBOX}/.ssl/scheduler.crt" \
+        --tls-key "${MESOS_SANDBOX}/.ssl/scheduler.key" \
         --host "${HOST}" \
-        --worker-port "${PORT1}" \
-        --http-port "${PORT2}" \
-        --nanny-port "${PORT3}" \
-        --bokeh-port "${PORT4}" \
-        --nprocs "1" \
+        --worker-port "${PORT_WORKER}" \
+        --nanny-port "${PORT_NANNY}" \
+        --bokeh-port "${PORT_BOKEH}" \
         --nthreads "${NTHREADS}" \
-        --memory-limit "${NBYTES}" \
+        --nprocs "1" \
         --name "${MESOS_TASK_ID}" \
+        --memory-limit "${NBYTES}" \
         --local-directory "${MESOS_SANDBOX}" \
         --resources "${DASK_RESOURCES}" \
         --death-timeout "180" \

@@ -6,142 +6,196 @@
       "instances": 1,
       "cpus": 1,
       "mem": 2048,
-      "cmd": "bash -c '(start-dask-scheduler.sh &) && sleep 5 && notebook.sh'",
+      "cmd": "/usr/local/bin/start-dask-scheduler.sh",
+      "fetch": [
+        {
+          "uri": "https://s3.amazonaws.com/vishnu-mohan/dask-distributed/config.yaml",
+          "extract": false,
+          "executable": false,
+          "cache": false
+        }
+      ],
       "env": {
-        "HOME": "/home/conda"
+        "DASK_CONFIG": "/mnt/mesos/sandbox/config.yaml",
+        "HOME": "/home/conda",
+        "TERM": "xterm-256color"
       },
       "labels": {
         "MARATHON_SINGLE_INSTANCE_APP": "true",
         "HAPROXY_GROUP": "external",
-        "HAPROXY_0_ENABLED": "true",
-        "HAPROXY_0_VHOST": "vhost.example.com",
-        "HAPROXY_0_PATH": "/dask-distributed/jupyter",
-        "HAPROXY_3_ENABLED": "true",
-        "HAPROXY_3_VHOST": "vhost.example.com",
-        "HAPROXY_3_PATH": "/dask-distributed/web"
+        "HAPROXY_1_ENABLED": "true",
+        "HAPROXY_0_VHOST": "vhost.example.com"
       },
       "container": {
         "type": "MESOS",
         "docker": {
-          "image": "vishnumohan/dask-distributed-dcos:0.14.1-1.16.1-1.9",
-          "forcePullImage": false
+          "image": "vishnumohan/dask-distributed-dcos",
+          "forcePullImage": true
         }
       },
       "portDefinitions": [
         {
           "protocol": "tcp",
           "port": 0,
+          "name": "scheduler",
           "labels": {
-            "VIP_0": "/dask-distributed.dask-scheduler:8888"
-          },
-          "name": "jupyter"
+            "VIP_0": "/dask-distributed.dask-scheduler:8786"
+          }
         },
         {
           "protocol": "tcp",
           "port": 0,
+          "name": "bokeh",
           "labels": {
-            "VIP_1": "/dask-distributed.dask-scheduler:8786"
-          },
-          "name": "dask-scheduler"
-        },
+            "VIP_0": "/dask-distributed.dask-scheduler:8787"
+          }
+        }
+      ],
+      "healthChecks": [
         {
-          "protocol": "tcp",
-          "port": 0,
-          "labels": {
-            "VIP_2": "/dask-distributed.dask-scheduler:9786"
+          "protocol": "COMMAND",
+          "command": {
+            "value": "curl -fsSL -X GET http://$HOST:$PORT_BOKEH/json/identity.json > /dev/null 2>&1"
           },
-          "name": "dask-scheduler-http"
-        },
-        {
-          "protocol": "tcp",
-          "port": 0,
-          "labels": {
-            "VIP_3": "/dask-distributed.dask-scheduler:8787"
-          },
-          "name": "dask-scheduler-bokeh"
-        },
-        {
-          "protocol": "tcp",
-          "port": 0,
-          "labels": {
-            "VIP_4": "/dask-distributed.dask-scheduler:8788"
-          },
-          "name": "dask-scheduler-bokeh-internal"
+          "portIndex": 1,
+          "gracePeriodSeconds": 60,
+          "intervalSeconds": 20,
+          "timeoutSeconds": 10,
+          "maxConsecutiveFailures": 3
         }
       ],
       "upgradeStrategy": {
         "minimumHealthCapacity": 0,
         "maximumOverCapacity": 0
       },
-      "healthChecks": [
-        {
-          "portIndex": 0,
-          "protocol": "MESOS_HTTP",
-          "path": "/dask-distributed/jupyter/api",
-          "gracePeriodSeconds": 30,
-          "intervalSeconds": 20,
-          "timeoutSeconds": 10,
-          "maxConsecutiveFailures": 3
-        }
-      ]
+      "unreachableStrategy": {
+        "expungeAfterSeconds": 0,
+        "inactiveAfterSeconds": 0
+      }
     },
     {
+      "dependencies": [
+        "/dask-distributed/dask-scheduler"
+      ],
       "id": "/dask-distributed/dask-worker",
       "instances": 1,
       "cpus": 2,
       "mem": 4096,
-      "cmd": "bash -c '(notebook.sh &) && sleep 5 && start-dask-worker.sh'",
+      "cmd": "/usr/local/bin/start-dask-worker.sh",
+      "fetch": [
+        {
+          "uri": "https://s3.amazonaws.com/vishnu-mohan/dask-distributed/config.yaml",
+          "extract": false,
+          "executable": false,
+          "cache": false
+        }
+      ],
       "env": {
-        "HOME": "/home/conda"
+        "DASK_CONFIG": "/mnt/mesos/sandbox/config.yaml",
+        "HOME": "/home/conda",
+        "TERM": "xterm-256color"
       },
       "container": {
         "type": "MESOS",
         "docker": {
-          "image": "vishnumohan/dask-distributed-dcos:0.14.1-1.16.1-1.9",
-          "forcePullImage": false
+          "image": "vishnumohan/dask-distributed-dcos",
+          "forcePullImage": true
         }
       },
       "portDefinitions": [
         {
           "protocol": "tcp",
           "port": 0,
-          "name": "jupyter"
+          "name": "worker"
         },
         {
           "protocol": "tcp",
           "port": 0,
-          "name": "dask-worker"
+          "name": "nanny"
         },
         {
           "protocol": "tcp",
           "port": 0,
-          "name": "dask-worker-http"
-        },
-        {
-          "protocol": "tcp",
-          "port": 0,
-          "name": "dask-worker-nanny"
-        },
-        {
-          "protocol": "tcp",
-          "port": 0,
-          "name": "dask-worker-bokeh"
+          "name": "bokeh"
         }
       ],
       "healthChecks": [
         {
+          "protocol": "COMMAND",
+          "command": {
+            "value": "curl -fsSL -X GET http://$HOST:$PORT_BOKEH/ > /dev/null 2>&1"
+          },
           "portIndex": 2,
+          "gracePeriodSeconds": 60,
+          "intervalSeconds": 20,
+          "timeoutSeconds": 10,
+          "maxConsecutiveFailures": 3
+        }
+      ],
+      "upgradeStrategy": {
+        "minimumHealthCapacity": 0,
+        "maximumOverCapacity": 0
+      },
+      "unreachableStrategy": {
+        "expungeAfterSeconds": 0,
+        "inactiveAfterSeconds": 0
+      }
+    },
+    {
+      "dependencies": [
+        "/dask-distributed/dask-scheduler"
+      ],
+      "id": "/dask-distributed/jupyter",
+      "instances": 1,
+      "cpus": 1,
+      "mem": 2048,
+      "cmd": "/usr/local/bin/notebook.sh",
+      "container": {
+        "type": "MESOS",
+        "docker": {
+          "image": "vishnumohan/dask-distributed-dcos",
+          "forcePullImage": true
+        }
+      },
+      "env": {
+        "TERM": "xterm-256color"
+      },
+      "labels": {
+        "MARATHON_SINGLE_INSTANCE_APP": "true",
+        "HAPROXY_GROUP": "external",
+        "HAPROXY_0_ENABLED": "true",
+        "HAPROXY_0_REDIRECT_TO_HTTPS": "true",
+        "HAPROXY_0_VHOST": "vhost.example.com"
+      },
+      "portDefinitions": [
+        {
+          "port": 0,
+          "protocol": "tcp",
+          "name": "jupyter",
+          "labels": {
+            "VIP_0": "/dask-distributed.jupyter:8888"
+          }
+        }
+      ],
+      "healthChecks": [
+        {
+          "portIndex": 0,
           "protocol": "MESOS_HTTP",
-          "path": "/info.json",
+          "path": "/api",
           "gracePeriodSeconds": 30,
           "intervalSeconds": 20,
           "timeoutSeconds": 10,
           "maxConsecutiveFailures": 3
         }
       ],
-      "dependencies": [
-        "/dask-distributed/dask-scheduler"
-      ]
+      "upgradeStrategy": {
+        "minimumHealthCapacity": 0,
+        "maximumOverCapacity": 0
+      },
+      "unreachableStrategy": {
+        "expungeAfterSeconds": 0,
+        "inactiveAfterSeconds": 0
+      }
     }
   ]
 }

@@ -1,0 +1,11 @@
+name: dask-distributed
+prefix: /home/conda/conda/envs/dask-distributed
+channels:
+- conda-forge
+dependencies:
+- dask
+- distributed
+- ipywidgets
+- jupyterlab
+- nodejs
+- pyarrow
